@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String         @id @default(cuid())
+  name         String
+  email        String         @unique
+  password     String
+  role         Role           @default(MEMBER)
+  personaScore Float          @default(0)
+  persona      Persona        @default(ADOPTER)
+  avatarSeed   String         @default(cuid())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  contributions Contribution[] @relation("Submissions")
+  validations  Validation[]   @relation("Validations")
+  userBadges   UserBadge[]
+}
+
+enum Role {
+  MEMBER
+  VALIDATOR
+  ADMIN
+}
+
+enum Persona {
+  ADOPTER
+  TRANSFORMER
+  INNOVATOR
+}
+
+model Contribution {
+  id          String      @id @default(cuid())
+  title       String
+  description String
+  area        Area
+  benefit     String
+  impact      ImpactLevel
+  scope       Scope
+  status      Status      @default(PENDING)
+  submitterId String
+  submitter   User        @relation("Submissions", fields: [submitterId], references: [id])
+  validation  Validation?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+enum Area {
+  PRODUCTIVITY
+  DELIVERABLE
+  INNOVATION
+  OTHER
+}
+
+enum ImpactLevel {
+  LOW
+  MEDIUM
+  HIGH
+  TRANSFORMATIVE
+}
+
+enum Scope {
+  CAPGEMINI
+  CLIENT
+  BOTH
+}
+
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Validation {
+  id             String       @id @default(cuid())
+  contributionId String       @unique
+  contribution   Contribution @relation(fields: [contributionId], references: [id])
+  validatorId    String
+  validator      User         @relation("Validations", fields: [validatorId], references: [id])
+  decision       Decision
+  rating         Int
+  note           String?
+  createdAt      DateTime     @default(now())
+}
+
+enum Decision {
+  APPROVED
+  REJECTED
+}
+
+model Badge {
+  id          String      @id @default(cuid())
+  key         String      @unique
+  name        String
+  description String
+  rarity      Rarity
+  icon        String
+  userBadges  UserBadge[]
+}
+
+enum Rarity {
+  COMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+model UserBadge {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id])
+  badgeId  String
+  badge    Badge    @relation(fields: [badgeId], references: [id])
+  earnedAt DateTime @default(now())
+
+  @@unique([userId, badgeId])
+}
