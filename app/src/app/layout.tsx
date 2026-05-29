@@ -19,6 +19,17 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "AINABLERS — AI Adoption Tracker",
   description: "Track, validate and celebrate AI adoption across the CM team",
+  openGraph: {
+    title: "AINABLERS — AI Adoption Tracker",
+    description: "Track, validate and celebrate AI adoption across the Capgemini CM team. Earn personas, unlock badges, and climb the leaderboard.",
+    siteName: "AINABLERS",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AINABLERS — AI Adoption Tracker",
+    description: "Track, validate and celebrate AI adoption across the Capgemini CM team.",
+  },
 }
 
 export default function RootLayout({
