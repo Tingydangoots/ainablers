@@ -95,12 +95,30 @@ export async function DELETE(
   const user = await db.user.findUnique({ where: { id }, select: { id: true } })
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 })
 
-  // Cascade: validations → userBadges → contributions → user
+  // 1. Find contributions the user submitted
   const contribIds = (
     await db.contribution.findMany({ where: { submitterId: id }, select: { id: true } })
   ).map((c) => c.id)
 
+  // 2. Delete validations on their own contributions
   await db.validation.deleteMany({ where: { contributionId: { in: contribIds } } })
+
+  // 3. Reset contributions validated BY this user (FK: validatorId → User)
+  //    Find those validations, reset the contribution status to PENDING, then delete them
+  const validatedByUser = await db.validation.findMany({
+    where: { validatorId: id },
+    select: { id: true, contributionId: true },
+  })
+  if (validatedByUser.length > 0) {
+    const affectedContribIds = validatedByUser.map((v) => v.contributionId)
+    await db.contribution.updateMany({
+      where: { id: { in: affectedContribIds } },
+      data: { status: "PENDING" },
+    })
+    await db.validation.deleteMany({ where: { validatorId: id } })
+  }
+
+  // 4. Delete badges, contributions, then the user
   await db.userBadge.deleteMany({ where: { userId: id } })
   await db.contribution.deleteMany({ where: { submitterId: id } })
   await db.user.delete({ where: { id } })
