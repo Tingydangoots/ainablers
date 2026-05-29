@@ -77,6 +77,37 @@ export async function GET(
   })
 }
 
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await auth()
+  if (!session || session.user.role !== "ADMIN") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
+  const { id } = await params
+
+  if (id === session.user.id) {
+    return NextResponse.json({ error: "Cannot delete your own account" }, { status: 400 })
+  }
+
+  const user = await db.user.findUnique({ where: { id }, select: { id: true } })
+  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 })
+
+  // Cascade: validations → userBadges → contributions → user
+  const contribIds = (
+    await db.contribution.findMany({ where: { submitterId: id }, select: { id: true } })
+  ).map((c) => c.id)
+
+  await db.validation.deleteMany({ where: { contributionId: { in: contribIds } } })
+  await db.userBadge.deleteMany({ where: { userId: id } })
+  await db.contribution.deleteMany({ where: { submitterId: id } })
+  await db.user.delete({ where: { id } })
+
+  return NextResponse.json({ ok: true })
+}
+
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

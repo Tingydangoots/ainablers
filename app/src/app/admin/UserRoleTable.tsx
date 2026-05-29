@@ -4,7 +4,7 @@ import { useState, useTransition } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { Cpu, Bot, Crosshair, ShieldCheck } from "lucide-react"
+import { Cpu, Bot, Crosshair, ShieldCheck, Trash2, AlertTriangle } from "lucide-react"
 
 interface UserRow {
   id: string
@@ -36,6 +36,7 @@ const PERSONA_COLORS: Record<string, string> = {
 export function UserRoleTable({ initialUsers, currentUserId }: { initialUsers: UserRow[]; currentUserId: string }) {
   const [users, setUsers] = useState(initialUsers)
   const [pending, startTransition] = useTransition()
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
   function handleRoleChange(userId: string, newRole: string) {
     startTransition(async () => {
@@ -54,6 +55,21 @@ export function UserRoleTable({ initialUsers, currentUserId }: { initialUsers: U
     })
   }
 
+  function handleDelete(userId: string) {
+    startTransition(async () => {
+      const res = await fetch(`/api/users/${userId}`, { method: "DELETE" })
+      if (!res.ok) {
+        const data = (await res.json()) as { error?: string }
+        toast.error(data.error ?? "Failed to delete user")
+        setConfirmDeleteId(null)
+        return
+      }
+      setUsers((prev) => prev.filter((u) => u.id !== userId))
+      setConfirmDeleteId(null)
+      toast.success("User deleted")
+    })
+  }
+
   return (
     <div className="overflow-x-auto rounded-xl border border-border">
       <table className="w-full text-sm">
@@ -64,6 +80,7 @@ export function UserRoleTable({ initialUsers, currentUserId }: { initialUsers: U
             <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Persona</th>
             <th className="px-4 py-3 text-right font-semibold text-muted-foreground">Score</th>
             <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Role</th>
+            <th className="px-4 py-3" />
           </tr>
         </thead>
         <tbody>
@@ -109,6 +126,38 @@ export function UserRoleTable({ initialUsers, currentUserId }: { initialUsers: U
                         <SelectItem value="ADMIN">Admin</SelectItem>
                       </SelectContent>
                     </Select>
+                  )}
+                </td>
+                <td className="px-4 py-3 text-right">
+                  {!isSelf && (
+                    confirmDeleteId === user.id ? (
+                      <div className="flex items-center justify-end gap-2">
+                        <AlertTriangle size={13} className="text-red-500 shrink-0" />
+                        <span className="text-xs text-red-600 font-medium">Delete?</span>
+                        <button
+                          onClick={() => handleDelete(user.id)}
+                          disabled={pending}
+                          className="text-xs font-semibold text-white bg-red-500 hover:bg-red-600 px-2 py-1 rounded transition-colors disabled:opacity-50"
+                        >
+                          Yes
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteId(null)}
+                          disabled={pending}
+                          className="text-xs font-semibold text-muted-foreground hover:text-foreground px-2 py-1 rounded transition-colors"
+                        >
+                          No
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmDeleteId(user.id)}
+                        className="p-1.5 rounded text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-colors"
+                        title="Delete user"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )
                   )}
                 </td>
               </tr>
