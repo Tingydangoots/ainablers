@@ -70,6 +70,7 @@ export default async function SubmitPage() {
                     { label: "Innovation", value: "×2.5", color: "bg-brand-green/10 text-brand-green border-brand-green/20" },
                     { label: "Deliverable", value: "×1.5", color: "bg-primary/10 text-primary border-primary/20" },
                     { label: "Productivity", value: "×1.0", color: "bg-muted text-muted-foreground border-border" },
+                    { label: "Other", value: "×0.5", color: "bg-muted text-muted-foreground/60 border-border" },
                   ].map(({ label, value, color }) => (
                     <div key={label} className={`flex items-center justify-between text-xs rounded-lg px-2.5 py-1.5 mb-1 border ${color}`}>
                       <span>{label}</span>
