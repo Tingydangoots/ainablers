@@ -15,6 +15,7 @@ import {
   LogOut,
   Zap,
   Settings,
+  LayoutGrid,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -32,6 +33,7 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/submit", label: "Submit", icon: PlusCircle },
   { href: "/tracker", label: "Tracker", icon: ClipboardList },
+  { href: "/contribution-grid", label: "Contribution Grid", icon: LayoutGrid },
   { href: "/validate", label: "Validate", icon: ShieldCheck },
 ]
 

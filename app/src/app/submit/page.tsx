@@ -103,12 +103,15 @@ export default async function SubmitPage() {
                 <h3 className="font-semibold text-foreground text-sm">Persona Milestones</h3>
               </div>
               {[
-                { label: "Recruit → Spartan",       pts: "20 pts",  color: "text-sky-600"    },
-                { label: "Spartan → Master Chief",  pts: "50 pts",  color: "text-amber-600"  },
-                { label: "Master Chief → Forerunner", pts: "100 pts", color: "text-violet-600" },
-              ].map(({ label, pts, color }) => (
+                { label: "Recruit → Spartan",         sub: "(Adopter → Transformer)",   pts: "100 pts", color: "text-sky-600"    },
+                { label: "Spartan → Master Chief",    sub: "(Transformer → Innovator)", pts: "200 pts", color: "text-amber-600"  },
+                { label: "Master Chief → Forerunner", sub: "(Innovator → Legend)",      pts: "300 pts", color: "text-violet-600" },
+              ].map(({ label, sub, pts, color }) => (
                 <div key={label} className="flex items-center justify-between text-sm py-2 border-b border-border last:border-0">
-                  <span className="text-muted-foreground text-xs">{label}</span>
+                  <div>
+                    <p className="text-foreground text-xs font-medium">{label}</p>
+                    <p className="text-muted-foreground text-xs">{sub}</p>
+                  </div>
                   <span className={`font-bold text-xs ${color}`}>{pts}</span>
                 </div>
               ))}

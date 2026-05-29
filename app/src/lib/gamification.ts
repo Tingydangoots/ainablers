@@ -17,9 +17,9 @@ export const IMPACT_MULTIPLIERS: Record<ImpactLevel, number> = {
 }
 
 export const PERSONA_THRESHOLDS = {
-  TRANSFORMER: 20,
-  INNOVATOR: 50,
-  LEGEND: 100,
+  TRANSFORMER: 100,
+  INNOVATOR: 200,
+  LEGEND: 300,
 }
 
 // ─── Score ───────────────────────────────────────────────────────────────────
