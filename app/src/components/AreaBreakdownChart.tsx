@@ -31,7 +31,7 @@ interface AreaData {
 export function AreaBreakdownChart({ data }: { data: AreaData[] }) {
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-48 text-slate-500 text-sm">
+      <div className="flex items-center justify-center h-48 text-muted-foreground text-sm">
         No approved contributions yet
       </div>
     )
@@ -61,14 +61,15 @@ export function AreaBreakdownChart({ data }: { data: AreaData[] }) {
         </Pie>
         <Tooltip
           contentStyle={{
-            backgroundColor: "#0f172a",
-            border: "1px solid #1e293b",
+            backgroundColor: "white",
+            border: "1px solid #e2e8f0",
             borderRadius: "8px",
-            color: "#f1f5f9",
+            color: "#0f172a",
+            fontSize: 12,
           }}
         />
         <Legend
-          formatter={(value) => <span style={{ color: "#94a3b8", fontSize: 12 }}>{value}</span>}
+          formatter={(value) => <span style={{ color: "#64748b", fontSize: 12 }}>{value}</span>}
         />
       </PieChart>
     </ResponsiveContainer>

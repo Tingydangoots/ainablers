@@ -24,13 +24,13 @@ interface LeaderEntry {
   _count: { contributions: number }
 }
 
-const RANK_COLORS = ["text-yellow-400", "text-slate-300", "text-orange-400"]
+const RANK_COLORS = ["text-yellow-500", "text-muted-foreground", "text-orange-500"]
 const RANK_BADGES = ["🥇", "🥈", "🥉"]
 
 export function LeaderboardTable({ entries }: { entries: LeaderEntry[] }) {
   if (entries.length === 0) {
     return (
-      <div className="text-center py-12 text-slate-500">
+      <div className="text-center py-12 text-muted-foreground">
         <Trophy size={40} className="mx-auto mb-3 opacity-30" />
         <p>No entries yet. Be the first to submit a contribution!</p>
       </div>
@@ -52,12 +52,12 @@ export function LeaderboardTable({ entries }: { entries: LeaderEntry[] }) {
             className={cn(
               "flex items-center gap-4 p-4 rounded-xl border transition-all",
               i === 0
-                ? "bg-yellow-950/30 border-yellow-800/50"
-                : "bg-slate-900 border-slate-800"
+                ? "bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-800/50"
+                : "bg-card border-border hover:border-primary/30"
             )}
           >
             {/* Rank */}
-            <div className={cn("w-8 text-center font-bold text-lg", RANK_COLORS[i] ?? "text-slate-500")}>
+            <div className={cn("w-8 text-center font-bold text-lg", RANK_COLORS[i] ?? "text-muted-foreground")}>
               {i < 3 ? RANK_BADGES[i] : `#${i + 1}`}
             </div>
 
@@ -67,19 +67,19 @@ export function LeaderboardTable({ entries }: { entries: LeaderEntry[] }) {
             {/* Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-white font-semibold text-sm truncate">{entry.name}</span>
+                <span className="text-foreground font-semibold text-sm truncate">{entry.name}</span>
                 <PersonaBadge persona={entry.persona} size="sm" />
               </div>
               <div className="flex items-center gap-2 mt-1 flex-wrap">
-                <span className="text-slate-500 text-xs">{entry._count.contributions} contributions</span>
+                <span className="text-muted-foreground text-xs">{entry._count.contributions} contributions</span>
                 {topBadge && <BadgePill badge={topBadge.badge} />}
               </div>
             </div>
 
             {/* Score */}
             <div className="text-right">
-              <p className="text-white font-bold text-lg">{Math.round(entry.personaScore)}</p>
-              <p className="text-slate-500 text-xs">pts</p>
+              <p className="text-foreground font-bold text-lg">{Math.round(entry.personaScore)}</p>
+              <p className="text-muted-foreground text-xs">pts</p>
             </div>
           </div>
         )

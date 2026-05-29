@@ -56,13 +56,16 @@ export function BadgeDisplay({ userBadges, showLocked = true }: BadgeDisplayProp
                 )}
               </div>
             </TooltipTrigger>
-            <TooltipContent className="max-w-48 text-center">
-              <p className={cn("font-bold text-sm", rarity.color)}>{def.name}</p>
-              <p className="text-xs text-slate-300 mt-0.5">{def.description}</p>
-              <p className={cn("text-xs mt-1 font-semibold", rarity.color)}>
-                {rarity.label}
-              </p>
-              {!earned && <p className="text-xs text-slate-500 mt-1">🔒 Locked</p>}
+            <TooltipContent className="text-center">
+              <div className="flex items-center justify-center gap-1.5 mb-1">
+                <span className="text-base">{def.icon}</span>
+                <p className={cn("font-bold text-sm", rarity.color)}>{def.name}</p>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">{def.description}</p>
+              <div className="mt-2 pt-2 border-t border-border flex items-center justify-center gap-1.5">
+                <span className={cn("text-xs font-semibold uppercase tracking-wide", rarity.color)}>{rarity.label}</span>
+                {!earned && <span className="text-xs text-muted-foreground">· 🔒 Locked</span>}
+              </div>
             </TooltipContent>
           </Tooltip>
         )

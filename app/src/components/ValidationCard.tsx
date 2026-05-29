@@ -35,10 +35,10 @@ const IMPACT_LABELS: Record<string, string> = {
 }
 
 const IMPACT_COLORS: Record<string, string> = {
-  LOW: "bg-slate-700 text-slate-300",
-  MEDIUM: "bg-blue-900 text-blue-300",
-  HIGH: "bg-cyan-900 text-cyan-300",
-  TRANSFORMATIVE: "bg-purple-900 text-purple-300",
+  LOW: "bg-muted text-muted-foreground",
+  MEDIUM: "bg-primary/10 text-primary",
+  HIGH: "bg-secondary/10 text-secondary dark:text-blue-300",
+  TRANSFORMATIVE: "bg-yellow-50 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400",
 }
 
 interface ContributionForValidation {
@@ -95,13 +95,13 @@ export function ValidationCard({ contribution, onValidated }: ValidationCardProp
   }
 
   return (
-    <Card className="bg-slate-900 border-slate-800">
+    <Card className="border-border shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <CardTitle className="text-white text-base">{contribution.title}</CardTitle>
+            <CardTitle className="text-foreground text-base">{contribution.title}</CardTitle>
             <div className="flex items-center gap-2 mt-2 flex-wrap">
-              <div className="flex items-center gap-1.5 text-slate-400 text-xs">
+              <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
                 <User size={12} />
                 <span>{contribution.submitter.name}</span>
               </div>
@@ -114,15 +114,15 @@ export function ValidationCard({ contribution, onValidated }: ValidationCardProp
               >
                 {IMPACT_LABELS[contribution.impact]}
               </Badge>
-              <Badge variant="outline" className="text-xs border-slate-600 text-slate-400">
+              <Badge variant="outline" className="text-xs border-border text-muted-foreground">
                 {AREA_LABELS[contribution.area]}
               </Badge>
-              <Badge variant="outline" className="text-xs border-slate-600 text-slate-400">
+              <Badge variant="outline" className="text-xs border-border text-muted-foreground">
                 {contribution.scope}
               </Badge>
             </div>
           </div>
-          <div className="flex items-center gap-1 text-slate-500 text-xs whitespace-nowrap">
+          <div className="flex items-center gap-1 text-muted-foreground text-xs whitespace-nowrap">
             <Clock size={12} />
             {new Date(contribution.createdAt).toLocaleDateString()}
           </div>
@@ -131,19 +131,19 @@ export function ValidationCard({ contribution, onValidated }: ValidationCardProp
 
       <CardContent className="space-y-4">
         <div>
-          <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">What they did</p>
-          <p className="text-slate-200 text-sm leading-relaxed">{contribution.description}</p>
+          <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1">What they did</p>
+          <p className="text-foreground text-sm leading-relaxed">{contribution.description}</p>
         </div>
         <div>
-          <p className="text-slate-400 text-xs uppercase tracking-wider mb-1 flex items-center gap-1">
+          <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1 flex items-center gap-1">
             <Target size={11} /> Benefit realised
           </p>
-          <p className="text-slate-200 text-sm leading-relaxed">{contribution.benefit}</p>
+          <p className="text-foreground text-sm leading-relaxed">{contribution.benefit}</p>
         </div>
 
         {/* Star Rating */}
         <div className="space-y-2">
-          <Label className="text-slate-300 text-sm">Validator Rating</Label>
+          <Label className="text-foreground text-sm">Validator Rating</Label>
           <div className="flex gap-1.5">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -159,14 +159,14 @@ export function ValidationCard({ contribution, onValidated }: ValidationCardProp
                   className={cn(
                     "transition-colors",
                     star <= (hoverRating || rating)
-                      ? "text-yellow-400 fill-yellow-400"
-                      : "text-slate-600"
+                      ? "text-yellow-500 fill-yellow-500"
+                      : "text-muted-foreground/30"
                   )}
                 />
               </button>
             ))}
             {rating > 0 && (
-              <span className="text-yellow-400 text-sm font-semibold ml-1 self-center">
+              <span className="text-yellow-600 dark:text-yellow-400 text-sm font-semibold ml-1 self-center">
                 {["", "Needs Work", "Getting There", "Good", "Great", "Outstanding"][rating]}
               </span>
             )}
@@ -174,13 +174,13 @@ export function ValidationCard({ contribution, onValidated }: ValidationCardProp
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-slate-300 text-sm">Note (optional)</Label>
+          <Label className="text-foreground text-sm">Note (optional)</Label>
           <Textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="Add feedback for the team member..."
             rows={2}
-            className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 resize-none text-sm"
+            className="bg-background border-border text-foreground placeholder:text-muted-foreground resize-none text-sm"
           />
         </div>
 
@@ -197,7 +197,7 @@ export function ValidationCard({ contribution, onValidated }: ValidationCardProp
             onClick={() => submit("REJECTED")}
             disabled={submitting}
             variant="outline"
-            className="flex-1 border-red-800 text-red-400 hover:bg-red-900/30"
+            className="flex-1 border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
           >
             <XCircle size={14} className="mr-2" />
             Reject

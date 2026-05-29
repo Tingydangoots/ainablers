@@ -1,12 +1,13 @@
 import { PERSONA_META } from "@/lib/gamification"
 import { Persona } from "@/generated/prisma"
 import { cn } from "@/lib/utils"
-import { Shield, Swords, Wand2 } from "lucide-react"
+import { Bot, Crosshair, Cpu, Crown } from "lucide-react"
 
 const PERSONA_ICONS = {
-  ADOPTER: Shield,
-  TRANSFORMER: Swords,
-  INNOVATOR: Wand2,
+  ADOPTER: Bot,
+  TRANSFORMER: Crosshair,
+  INNOVATOR: Cpu,
+  LEGEND: Crown,
 }
 
 interface PersonaBadgeProps {
@@ -34,7 +35,8 @@ export function PersonaBadge({ persona, showTitle = true, size = "md" }: Persona
         `bg-gradient-to-r ${meta.color}`,
         meta.border,
         sizeClasses,
-        persona === "INNOVATOR" && "shadow-md shadow-yellow-400/40"
+        persona === "INNOVATOR" && "shadow-md shadow-yellow-400/40",
+        persona === "LEGEND" && "shadow-md shadow-violet-400/60"
       )}
     >
       <Icon size={iconSizes} className="text-white" />

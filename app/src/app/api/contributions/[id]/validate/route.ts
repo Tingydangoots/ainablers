@@ -14,9 +14,6 @@ export async function POST(
 ) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  if (session.user.role === "MEMBER") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-  }
 
   const { id } = await params
   const body = await req.json()
@@ -31,6 +28,9 @@ export async function POST(
   })
   if (!contribution) {
     return NextResponse.json({ error: "Not found" }, { status: 404 })
+  }
+  if (contribution.submitterId === session.user.id) {
+    return NextResponse.json({ error: "Cannot validate your own contribution" }, { status: 403 })
   }
   if (contribution.validation) {
     return NextResponse.json({ error: "Already validated" }, { status: 409 })

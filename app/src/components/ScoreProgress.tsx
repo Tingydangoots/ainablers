@@ -10,13 +10,20 @@ interface ScoreProgressProps {
 
 export function ScoreProgress({ persona, score }: ScoreProgressProps) {
   const meta = PERSONA_META[persona]
-  const isMaxed = persona === "INNOVATOR"
+  const isMaxed = persona === "LEGEND"
   const threshold = nextPersonaThreshold(persona)
-  const prevThreshold = persona === "TRANSFORMER" ? PERSONA_THRESHOLDS.TRANSFORMER : 0
+  const prevThreshold =
+    persona === "TRANSFORMER" ? PERSONA_THRESHOLDS.TRANSFORMER :
+    persona === "INNOVATOR"   ? PERSONA_THRESHOLDS.INNOVATOR :
+    persona === "LEGEND"      ? PERSONA_THRESHOLDS.LEGEND :
+    0
   const range = threshold - prevThreshold
   const progress = isMaxed ? 100 : Math.min(100, ((score - prevThreshold) / range) * 100)
 
-  const nextMeta = isMaxed ? null : persona === "ADOPTER" ? PERSONA_META.TRANSFORMER : PERSONA_META.INNOVATOR
+  const nextMeta = isMaxed ? null :
+    persona === "ADOPTER"      ? PERSONA_META.TRANSFORMER :
+    persona === "TRANSFORMER"  ? PERSONA_META.INNOVATOR :
+    PERSONA_META.LEGEND
 
   return (
     <div className="space-y-2">
@@ -25,7 +32,7 @@ export function ScoreProgress({ persona, score }: ScoreProgressProps) {
           {meta.label} · {Math.round(score)} pts
         </span>
         {!isMaxed && nextMeta && (
-          <span className="text-slate-400 text-xs">
+          <span className="text-muted-foreground text-xs">
             Next: <span className={cn("font-semibold", nextMeta.textColor)}>{nextMeta.label}</span>
             {" "}at {threshold} pts
           </span>
@@ -38,8 +45,9 @@ export function ScoreProgress({ persona, score }: ScoreProgressProps) {
         <Progress
           value={progress}
           className={cn(
-            "h-3 bg-slate-800",
-            persona === "INNOVATOR" && "shadow-sm shadow-yellow-400/30"
+            "h-3 bg-muted",
+            persona === "INNOVATOR" && "shadow-sm shadow-yellow-400/30",
+          persona === "LEGEND" && "shadow-sm shadow-violet-400/30"
           )}
         />
         <div

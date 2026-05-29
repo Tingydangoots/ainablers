@@ -30,9 +30,9 @@ export function ValidationQueueClient({
 
   if (queue.length === 0) {
     return (
-      <div className="text-center py-24 text-slate-500">
-        <CheckCircle size={48} className="mx-auto mb-4 text-green-500/40" />
-        <p className="text-lg font-semibold text-slate-400">Queue is clear!</p>
+      <div className="text-center py-24 text-muted-foreground">
+        <CheckCircle size={48} className="mx-auto mb-4 text-accent/40" />
+        <p className="text-lg font-semibold text-foreground">Queue is clear!</p>
         <p className="text-sm mt-1">All contributions have been reviewed.</p>
       </div>
     )

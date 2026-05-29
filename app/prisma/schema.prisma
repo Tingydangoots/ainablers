@@ -33,6 +33,7 @@ enum Persona {
   ADOPTER
   TRANSFORMER
   INNOVATOR
+  LEGEND
 }
 
 model Contribution {

@@ -19,6 +19,7 @@ export const IMPACT_MULTIPLIERS: Record<ImpactLevel, number> = {
 export const PERSONA_THRESHOLDS = {
   TRANSFORMER: 20,
   INNOVATOR: 50,
+  LEGEND: 100,
 }
 
 // ─── Score ───────────────────────────────────────────────────────────────────
@@ -32,6 +33,7 @@ export function calcContributionScore(
 }
 
 export function derivePersona(totalScore: number): Persona {
+  if (totalScore >= PERSONA_THRESHOLDS.LEGEND) return "LEGEND"
   if (totalScore >= PERSONA_THRESHOLDS.INNOVATOR) return "INNOVATOR"
   if (totalScore >= PERSONA_THRESHOLDS.TRANSFORMER) return "TRANSFORMER"
   return "ADOPTER"
@@ -40,7 +42,8 @@ export function derivePersona(totalScore: number): Persona {
 export function nextPersonaThreshold(persona: Persona): number {
   if (persona === "ADOPTER") return PERSONA_THRESHOLDS.TRANSFORMER
   if (persona === "TRANSFORMER") return PERSONA_THRESHOLDS.INNOVATOR
-  return PERSONA_THRESHOLDS.INNOVATOR
+  if (persona === "INNOVATOR") return PERSONA_THRESHOLDS.LEGEND
+  return PERSONA_THRESHOLDS.LEGEND
 }
 
 // ─── Badge definitions ───────────────────────────────────────────────────────
@@ -126,9 +129,16 @@ export const BADGE_DEFINITIONS = [
   {
     key: "ainabler_legend",
     name: "AINABLER Legend",
-    description: "Reached Innovator status — the pinnacle",
+    description: "Reached Innovator status — elite AI practitioner",
     rarity: "LEGENDARY" as const,
     icon: "👑",
+  },
+  {
+    key: "forerunner",
+    name: "Forerunner",
+    description: "Reached Legend status — 100+ pts of AI mastery",
+    rarity: "LEGENDARY" as const,
+    icon: "🌌",
   },
 ] as const
 
@@ -167,9 +177,10 @@ export function getEarnedBadgeKeys(
   const hasPerfect = approved.some((c) => c.validation?.rating === 5)
   if (hasPerfect) earned.push("perfect_score")
 
-  if (persona === "TRANSFORMER" || persona === "INNOVATOR") earned.push("trailblazer")
+  if (persona === "TRANSFORMER" || persona === "INNOVATOR" || persona === "LEGEND") earned.push("trailblazer")
   if (totalScore >= 100) earned.push("century")
-  if (persona === "INNOVATOR") earned.push("ainabler_legend")
+  if (persona === "INNOVATOR" || persona === "LEGEND") earned.push("ainabler_legend")
+  if (persona === "LEGEND") earned.push("forerunner")
 
   return earned
 }
@@ -178,67 +189,74 @@ export function getEarnedBadgeKeys(
 
 export const PERSONA_META = {
   ADOPTER: {
-    label: "Squire",
+    label: "Recruit",
     title: "Adopter",
-    description: "Building AI habits and daily efficiency",
-    color: "from-blue-600 to-blue-400",
-    border: "border-blue-500",
-    glow: "shadow-blue-500/40",
-    textColor: "text-blue-400",
-    avatarStyle: "pixel-art",
+    description: "Integrating AI tools into daily operations",
+    color: "from-emerald-700 to-green-500",
+    border: "border-emerald-500",
+    glow: "shadow-emerald-500/40",
+    textColor: "text-emerald-700",
     tier: 1,
   },
   TRANSFORMER: {
-    label: "Knight",
+    label: "Spartan",
     title: "Transformer",
-    description: "Driving AI-powered productivity on real deliverables",
-    color: "from-cyan-500 to-blue-500",
-    border: "border-cyan-400",
-    glow: "shadow-cyan-400/50",
-    textColor: "text-cyan-400",
-    avatarStyle: "adventurer",
+    description: "Deploying AI-augmented capabilities on critical deliverables",
+    color: "from-blue-700 to-sky-400",
+    border: "border-sky-400",
+    glow: "shadow-sky-400/50",
+    textColor: "text-sky-700",
     tier: 2,
   },
   INNOVATOR: {
-    label: "Archmage",
+    label: "Master Chief",
     title: "Innovator",
-    description: "Building agentic AI tools that transform the business",
-    color: "from-yellow-400 via-orange-400 to-yellow-300",
-    border: "border-yellow-400",
-    glow: "shadow-yellow-400/60",
-    textColor: "text-yellow-400",
-    avatarStyle: "rings",
+    description: "Building autonomous AI systems that change the battlefield",
+    color: "from-amber-600 via-orange-500 to-amber-400",
+    border: "border-amber-400",
+    glow: "shadow-amber-400/60",
+    textColor: "text-amber-600",
     tier: 3,
+  },
+  LEGEND: {
+    label: "Forerunner",
+    title: "Legend",
+    description: "Transcended the battlefield — forging the AI future itself",
+    color: "from-purple-800 via-violet-600 to-fuchsia-500",
+    border: "border-violet-400",
+    glow: "shadow-violet-500/60",
+    textColor: "text-violet-600",
+    tier: 4,
   },
 } as const
 
 export const RARITY_META = {
   COMMON: {
     label: "Common",
-    color: "text-slate-300",
-    border: "border-slate-400",
-    bg: "bg-slate-800",
+    color: "text-slate-600 dark:text-slate-300",
+    border: "border-slate-300 dark:border-slate-500",
+    bg: "bg-slate-100 dark:bg-slate-800",
     glow: "",
   },
   RARE: {
     label: "Rare",
-    color: "text-blue-300",
-    border: "border-blue-400",
-    bg: "bg-blue-950",
+    color: "text-blue-600 dark:text-blue-300",
+    border: "border-blue-300 dark:border-blue-500",
+    bg: "bg-blue-50 dark:bg-blue-950",
     glow: "shadow-blue-500/30",
   },
   EPIC: {
     label: "Epic",
-    color: "text-purple-300",
-    border: "border-purple-400",
-    bg: "bg-purple-950",
+    color: "text-purple-600 dark:text-purple-300",
+    border: "border-purple-300 dark:border-purple-500",
+    bg: "bg-purple-50 dark:bg-purple-950",
     glow: "shadow-purple-500/40",
   },
   LEGENDARY: {
     label: "Legendary",
-    color: "text-yellow-300",
-    border: "border-yellow-400",
-    bg: "bg-yellow-950",
+    color: "text-yellow-600 dark:text-yellow-300",
+    border: "border-yellow-400 dark:border-yellow-500",
+    bg: "bg-yellow-50 dark:bg-yellow-950",
     glow: "shadow-yellow-400/50",
   },
 } as const
