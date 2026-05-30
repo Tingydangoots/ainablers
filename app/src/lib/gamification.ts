@@ -17,9 +17,27 @@ export const IMPACT_MULTIPLIERS: Record<ImpactLevel, number> = {
 }
 
 export const PERSONA_THRESHOLDS = {
-  TRANSFORMER: 100,
-  INNOVATOR: 200,
-  LEGEND: 300,
+  TRANSFORMER: 500,
+  INNOVATOR: 1000,
+  LEGEND: 2000,
+}
+
+// ─── Anti-gaming: area score caps ────────────────────────────────────────────
+// PRODUCTIVITY and OTHER contributions stop earning score after these totals.
+// They still count toward badges and contribution history.
+
+export const AREA_SCORE_CAPS: Partial<Record<Area, number>> = {
+  PRODUCTIVITY: 200,
+  OTHER: 100,
+}
+
+// ─── Anti-gaming: tier gate requirements ─────────────────────────────────────
+// Score alone isn't enough — each tier requires proven depth in the right areas.
+
+export const TIER_GATES = {
+  TRANSFORMER: { area: "DELIVERABLE" as Area, min: 3 },
+  INNOVATOR:   { area: "INNOVATION"  as Area, min: 5 },
+  LEGEND:      { area: "INNOVATION"  as Area, min: 8 },
 }
 
 // ─── Score ───────────────────────────────────────────────────────────────────
@@ -32,10 +50,44 @@ export function calcContributionScore(
   return rating * AREA_WEIGHTS[area] * IMPACT_MULTIPLIERS[impact]
 }
 
+/** Sums contribution scores with area caps applied. Pass contributions in chronological order. */
+export function calcTotalScore(
+  contributions: Array<{ area: Area; impact: ImpactLevel; rating: number }>
+): number {
+  const areaTotals: Partial<Record<Area, number>> = {}
+  let total = 0
+  for (const c of contributions) {
+    const raw = calcContributionScore(c.area, c.impact, c.rating)
+    const areaSoFar = areaTotals[c.area] ?? 0
+    const cap = AREA_SCORE_CAPS[c.area]
+    const earned = cap !== undefined ? Math.min(raw, Math.max(0, cap - areaSoFar)) : raw
+    areaTotals[c.area] = areaSoFar + earned
+    total += earned
+  }
+  return total
+}
+
 export function derivePersona(totalScore: number): Persona {
   if (totalScore >= PERSONA_THRESHOLDS.LEGEND) return "LEGEND"
   if (totalScore >= PERSONA_THRESHOLDS.INNOVATOR) return "INNOVATOR"
   if (totalScore >= PERSONA_THRESHOLDS.TRANSFORMER) return "TRANSFORMER"
+  return "ADOPTER"
+}
+
+/**
+ * Derives persona applying both score thresholds AND area gate requirements.
+ * areaCounts = approved contribution counts per area.
+ */
+export function derivePersonaWithGates(
+  totalScore: number,
+  areaCounts: Partial<Record<Area, number>>
+): Persona {
+  const deliverable = areaCounts["DELIVERABLE"] ?? 0
+  const innovation  = areaCounts["INNOVATION"]  ?? 0
+
+  if (totalScore >= PERSONA_THRESHOLDS.LEGEND      && innovation  >= TIER_GATES.LEGEND.min)       return "LEGEND"
+  if (totalScore >= PERSONA_THRESHOLDS.INNOVATOR   && innovation  >= TIER_GATES.INNOVATOR.min)    return "INNOVATOR"
+  if (totalScore >= PERSONA_THRESHOLDS.TRANSFORMER && deliverable >= TIER_GATES.TRANSFORMER.min)  return "TRANSFORMER"
   return "ADOPTER"
 }
 

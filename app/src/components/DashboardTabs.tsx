@@ -10,7 +10,7 @@ import { ScoreProgress } from "@/components/ScoreProgress"
 import { BadgeDisplay } from "@/components/BadgeDisplay"
 import { AreaBreakdownChart } from "@/components/AreaBreakdownChart"
 import { MemberProfileDialog } from "@/components/MemberProfileDialog"
-import { PERSONA_META } from "@/lib/gamification"
+import { PERSONA_META, PERSONA_THRESHOLDS } from "@/lib/gamification"
 import { Persona, Rarity } from "@/generated/prisma"
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
@@ -152,12 +152,12 @@ function CommandCenter({
     { name: "Rejected", value: teamStats.totalRejected, color: "#ef4444" },
   ].filter((d) => d.value > 0)
 
-  // Near-upgrade: members within 10 pts of next threshold
+  // Near-upgrade: members within 50 pts of next threshold
   const nearUpgrade = leaderboard.filter((u) => {
     const score = u.personaScore
-    if (u.persona === "ADOPTER")     return score >= 12  && score < 20
-    if (u.persona === "TRANSFORMER") return score >= 42  && score < 50
-    if (u.persona === "INNOVATOR")   return score >= 90  && score < 100
+    if (u.persona === "ADOPTER")     return score >= PERSONA_THRESHOLDS.TRANSFORMER - 50 && score < PERSONA_THRESHOLDS.TRANSFORMER
+    if (u.persona === "TRANSFORMER") return score >= PERSONA_THRESHOLDS.INNOVATOR - 50  && score < PERSONA_THRESHOLDS.INNOVATOR
+    if (u.persona === "INNOVATOR")   return score >= PERSONA_THRESHOLDS.LEGEND - 50     && score < PERSONA_THRESHOLDS.LEGEND
     return false
   })
 
@@ -267,7 +267,7 @@ function CommandCenter({
           <CardContent className="pb-4">
             <div className="flex flex-wrap gap-3">
               {nearUpgrade.map((u) => {
-                const next = u.persona === "ADOPTER" ? 20 : u.persona === "TRANSFORMER" ? 50 : 100
+                const next = u.persona === "ADOPTER" ? PERSONA_THRESHOLDS.TRANSFORMER : u.persona === "TRANSFORMER" ? PERSONA_THRESHOLDS.INNOVATOR : PERSONA_THRESHOLDS.LEGEND
                 const nextLabel = u.persona === "ADOPTER" ? "Spartan" : u.persona === "TRANSFORMER" ? "Master Chief" : "Forerunner"
                 const gap = next - Math.round(u.personaScore)
                 return (

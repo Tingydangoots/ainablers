@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { db } from "@/lib/db"
 import { validationSchema } from "@/lib/schemas/validation"
+import { Area } from "@/generated/prisma"
 import {
-  calcContributionScore,
-  derivePersona,
+  calcTotalScore,
+  derivePersonaWithGates,
   getEarnedBadgeKeys,
 } from "@/lib/gamification"
 
@@ -56,18 +57,26 @@ export async function POST(
     })
   })
 
-  // Recalculate the submitter's score
+  // Recalculate the submitter's score (chronological order for deterministic cap application)
   const allContributions = await db.contribution.findMany({
     where: { submitterId: contribution.submitterId, status: "APPROVED" },
     include: { validation: true },
+    orderBy: { createdAt: "asc" },
   })
 
-  const totalScore = allContributions.reduce((acc, c) => {
-    if (!c.validation) return acc
-    return acc + calcContributionScore(c.area, c.impact, c.validation.rating)
-  }, 0)
+  const totalScore = calcTotalScore(
+    allContributions
+      .filter((c) => c.validation)
+      .map((c) => ({ area: c.area, impact: c.impact, rating: c.validation!.rating }))
+  )
 
-  const newPersona = derivePersona(totalScore)
+  // Count approved contributions per area for tier gate checks
+  const areaCounts: Partial<Record<Area, number>> = {}
+  for (const c of allContributions) {
+    areaCounts[c.area] = (areaCounts[c.area] ?? 0) + 1
+  }
+
+  const newPersona = derivePersonaWithGates(totalScore, areaCounts)
 
   await db.user.update({
     where: { id: contribution.submitterId },

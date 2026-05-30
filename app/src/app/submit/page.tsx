@@ -4,7 +4,7 @@ import { redirect } from "next/navigation"
 import { Nav } from "@/components/Nav"
 import { ContributionForm } from "@/components/ContributionForm"
 import { Persona } from "@/generated/prisma"
-import { PlusCircle, Zap, TrendingUp, Star } from "lucide-react"
+import { PlusCircle, Zap, TrendingUp, Star, ShieldCheck } from "lucide-react"
 
 export default async function SubmitPage() {
   const session = await auth()
@@ -103,9 +103,9 @@ export default async function SubmitPage() {
                 <h3 className="font-semibold text-foreground text-sm">Persona Milestones</h3>
               </div>
               {[
-                { label: "Recruit → Spartan",         sub: "(Adopter → Transformer)",   pts: "100 pts", color: "text-sky-600"    },
-                { label: "Spartan → Master Chief",    sub: "(Transformer → Innovator)", pts: "200 pts", color: "text-amber-600"  },
-                { label: "Master Chief → Forerunner", sub: "(Innovator → Legend)",      pts: "300 pts", color: "text-violet-600" },
+                { label: "Recruit → Spartan",         sub: "(Adopter → Transformer)",   pts: "500 pts", color: "text-sky-600"    },
+                { label: "Spartan → Master Chief",    sub: "(Transformer → Innovator)", pts: "1,000 pts", color: "text-amber-600"  },
+                { label: "Master Chief → Forerunner", sub: "(Innovator → Legend)",      pts: "2,000 pts", color: "text-violet-600" },
               ].map(({ label, sub, pts, color }) => (
                 <div key={label} className="flex items-center justify-between text-sm py-2 border-b border-border last:border-0">
                   <div>
@@ -115,6 +115,35 @@ export default async function SubmitPage() {
                   <span className={`font-bold text-xs ${color}`}>{pts}</span>
                 </div>
               ))}
+            </div>
+
+            {/* Tier requirements */}
+            <div className="rounded-2xl border border-amber-200 bg-amber-50/60 p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <ShieldCheck size={16} className="text-amber-600" />
+                <h3 className="font-semibold text-amber-900 text-sm">Tier Requirements</h3>
+              </div>
+              <p className="text-xs text-amber-700 mb-3 leading-relaxed">
+                Score alone isn&apos;t enough. Each tier requires proven depth in the right areas.
+              </p>
+              {[
+                { tier: "Spartan",      req: "≥ 3 Deliverable approvals",  pts: "500 pts",   color: "text-sky-600"    },
+                { tier: "Master Chief", req: "≥ 5 Innovation approvals",   pts: "1,000 pts", color: "text-amber-600"  },
+                { tier: "Forerunner",   req: "≥ 8 Innovation approvals",   pts: "2,000 pts", color: "text-violet-600" },
+              ].map(({ tier, req, pts, color }) => (
+                <div key={tier} className="py-2 border-b border-amber-200 last:border-0">
+                  <div className="flex items-center justify-between mb-0.5">
+                    <span className={`font-bold text-xs ${color}`}>{tier}</span>
+                    <span className="text-xs font-semibold text-amber-800">{pts}</span>
+                  </div>
+                  <p className="text-xs text-amber-700">{req}</p>
+                </div>
+              ))}
+              <div className="mt-3 pt-3 border-t border-amber-200 space-y-1">
+                <p className="text-xs font-semibold text-amber-800">Score caps</p>
+                <p className="text-xs text-amber-700">Productivity contributions cap at <span className="font-semibold">200 pts</span> total.</p>
+                <p className="text-xs text-amber-700">Other contributions cap at <span className="font-semibold">100 pts</span> total.</p>
+              </div>
             </div>
 
             {/* Rating guide */}
