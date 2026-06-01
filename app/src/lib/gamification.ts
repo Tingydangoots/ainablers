@@ -17,9 +17,9 @@ export const IMPACT_MULTIPLIERS: Record<ImpactLevel, number> = {
 }
 
 export const PERSONA_THRESHOLDS = {
-  TRANSFORMER: 500,
-  INNOVATOR: 1000,
-  LEGEND: 2000,
+  TRANSFORMER: 100,
+  INNOVATOR: 250,
+  LEGEND: 500,
 }
 
 // ─── Anti-gaming: area score caps ────────────────────────────────────────────
@@ -35,9 +35,9 @@ export const AREA_SCORE_CAPS: Partial<Record<Area, number>> = {
 // Score alone isn't enough — each tier requires proven depth in the right areas.
 
 export const TIER_GATES = {
-  TRANSFORMER: { area: "DELIVERABLE" as Area, min: 3 },
-  INNOVATOR:   { area: "INNOVATION"  as Area, min: 5 },
-  LEGEND:      { area: "INNOVATION"  as Area, min: 8 },
+  TRANSFORMER: { area: "DELIVERABLE" as Area, min: 2 },
+  INNOVATOR:   { area: "INNOVATION"  as Area, min: 3 },
+  LEGEND:      { area: "INNOVATION"  as Area, min: 4 },
 }
 
 // ─── Score ───────────────────────────────────────────────────────────────────
