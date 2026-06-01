@@ -1,17 +1,21 @@
-import { NextResponse } from "next/server"
-import { auth } from "@/auth"
-import { db } from "@/lib/db"
-import { Area } from "@/generated/prisma"
-import { calcTotalScore, derivePersonaWithGates, getEarnedBadgeKeys } from "@/lib/gamification"
+import "dotenv/config"
+import { PrismaClient } from "../src/generated/prisma/client"
+import { PrismaLibSql } from "@prisma/adapter-libsql"
+import { Area } from "../src/generated/prisma/client"
+import {
+  calcTotalScore,
+  derivePersonaWithGates,
+  getEarnedBadgeKeys,
+} from "../src/lib/gamification"
 
-export async function POST() {
-  const session = await auth()
-  if (!session || session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
+const url = process.env.DATABASE_URL
+if (!url) throw new Error("DATABASE_URL not set")
+const adapter = new PrismaLibSql({ url, authToken: process.env.DATABASE_AUTH_TOKEN })
+const db = new PrismaClient({ adapter })
 
+async function main() {
   const users = await db.user.findMany({ select: { id: true, name: true } })
-  const results: { name: string; score: number; persona: string }[] = []
+  console.log(`Recalculating personas for ${users.length} users...`)
 
   for (const user of users) {
     const approved = await db.contribution.findMany({
@@ -38,6 +42,7 @@ export async function POST() {
       data: { personaScore: totalScore, persona: newPersona },
     })
 
+    // Recompute badges
     const allContributions = await db.contribution.findMany({
       where: { submitterId: user.id },
       include: { validation: true },
@@ -64,8 +69,12 @@ export async function POST() {
       }
     }
 
-    results.push({ name: user.name ?? user.id, score: totalScore, persona: newPersona })
+    console.log(`  ${user.name}: score=${totalScore.toFixed(1)}, persona=${newPersona}`)
   }
 
-  return NextResponse.json({ recalculated: results.length, results })
+  console.log("Done.")
 }
+
+main()
+  .catch((e) => { console.error(e); process.exit(1) })
+  .finally(() => db.$disconnect())
