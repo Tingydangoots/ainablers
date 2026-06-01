@@ -103,9 +103,9 @@ export default async function SubmitPage() {
                 <h3 className="font-semibold text-foreground text-sm">Persona Milestones</h3>
               </div>
               {[
-                { label: "Recruit → Spartan",         sub: "(Adopter → Transformer)",   pts: "500 pts", color: "text-sky-600"    },
-                { label: "Spartan → Master Chief",    sub: "(Transformer → Innovator)", pts: "1,000 pts", color: "text-amber-600"  },
-                { label: "Master Chief → Forerunner", sub: "(Innovator → Legend)",      pts: "2,000 pts", color: "text-violet-600" },
+                { label: "Recruit → Spartan",         sub: "(Adopter → Transformer)",   pts: "100 pts",   color: "text-sky-600"    },
+                { label: "Spartan → Master Chief",    sub: "(Transformer → Innovator)", pts: "250 pts",   color: "text-amber-600"  },
+                { label: "Master Chief → Forerunner", sub: "(Innovator → Legend)",      pts: "500 pts",   color: "text-violet-600" },
               ].map(({ label, sub, pts, color }) => (
                 <div key={label} className="flex items-center justify-between text-sm py-2 border-b border-border last:border-0">
                   <div>
@@ -127,9 +127,9 @@ export default async function SubmitPage() {
                 Score alone isn&apos;t enough. Each tier requires proven depth in the right areas.
               </p>
               {[
-                { tier: "Spartan",      req: "≥ 3 Deliverable approvals",  pts: "500 pts",   color: "text-sky-600"    },
-                { tier: "Master Chief", req: "≥ 5 Innovation approvals",   pts: "1,000 pts", color: "text-amber-600"  },
-                { tier: "Forerunner",   req: "≥ 8 Innovation approvals",   pts: "2,000 pts", color: "text-violet-600" },
+                { tier: "Spartan",      req: "≥ 2 Deliverable approvals",  pts: "100 pts",   color: "text-sky-600"    },
+                { tier: "Master Chief", req: "≥ 3 Innovation approvals",   pts: "250 pts",   color: "text-amber-600"  },
+                { tier: "Forerunner",   req: "≥ 4 Innovation approvals",   pts: "500 pts",   color: "text-violet-600" },
               ].map(({ tier, req, pts, color }) => (
                 <div key={tier} className="py-2 border-b border-amber-200 last:border-0">
                   <div className="flex items-center justify-between mb-0.5">
